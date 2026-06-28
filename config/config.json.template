@@ -1,0 +1,11 @@
+{
+  "node_id": "android-edge-node-01",
+  "device_name": "Legacy Android 4.0.4",
+  "api_url": "http://127.0.0.1:8080/v1",
+  "api_key": "sk-your-litellm-master-key-here",
+  "model": "google/gemini-1.5-flash",
+  "polling_interval_seconds": 5,
+  "max_retries": 3,
+  "log_level": "info",
+  "local_inference_fallback": false
+}
