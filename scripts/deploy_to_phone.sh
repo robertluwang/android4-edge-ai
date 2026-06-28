@@ -26,17 +26,6 @@ if [ ! -f "bin/picoclaw" ]; then
     chmod +x bin/picoclaw
 fi
 
-# Ensure config.json exists
-if [ ! -f "config/config.json" ]; then
-    if [ -f "config/config.json.template" ]; then
-        echo "Creating config/config.json from template..."
-        cp config/config.json.template config/config.json
-    else
-        echo "❌ Error: config/config.json.template not found. Please restore it."
-        exit 1
-    fi
-fi
-
 # Configuration inputs
 read -p "📱 Enter the Android Phone's IP address: " PHONE_IP
 if [ -z "$PHONE_IP" ]; then
@@ -89,18 +78,6 @@ fi
 echo "📤 Transferring PicoClaw binary..."
 scp -P "$PORT" bin/picoclaw "${USER}@${PHONE_IP}:${DEST_DIR}/picoclaw"
 
-# Transfer config.json
-echo "📤 Transferring config.json..."
-# For non-rooted, config goes to the same folder as the binary.
-# For rooted, config can go to /data/local/tmp or the system folder.
-if [ "$IS_ROOTED" = true ]; then
-    scp -P "$PORT" config/config.json "${USER}@${PHONE_IP}:/data/local/tmp/config.json"
-    # Create symlink or copy to /system/xbin/config.json
-    ssh -p "$PORT" "${USER}@${PHONE_IP}" "cp /data/local/tmp/config.json ${DEST_DIR}/config.json"
-else
-    scp -P "$PORT" config/config.json "${USER}@${PHONE_IP}:${DEST_DIR}/config.json"
-fi
-
 # Set executable permissions on the phone
 echo "🔧 Setting executable permissions on phone..."
 ssh -p "$PORT" "${USER}@${PHONE_IP}" "chmod +x ${DEST_DIR}/picoclaw"
@@ -113,10 +90,10 @@ if [ "$IS_ROOTED" = false ]; then
     echo "To run the PicoClaw binary on your non-rooted phone:"
     echo "  ssh -p 2222 root@${PHONE_IP}"
     echo "  cd ${DEST_DIR}"
-    echo "  ./picoclaw -c config.json"
+    echo "  ./picoclaw"
 else
     echo "To run the PicoClaw binary on your rooted phone:"
     echo "  ssh -p 22 root@${PHONE_IP}"
-    echo "  picoclaw -c /system/xbin/config.json"
+    echo "  picoclaw"
 fi
 echo "====================================================================="

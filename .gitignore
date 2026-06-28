@@ -21,4 +21,3 @@ Thumbs.db
 # Android 4 Edge AI specific ignores
 apks/
 bin/
-config/config.json
